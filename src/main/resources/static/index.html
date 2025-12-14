@@ -210,8 +210,10 @@
                 // *** 关键步骤：存储 Token ***
                 localStorage.setItem('jwt_token', token);
 
+
                 // 打印 Token 供调试
                 console.log("获取到的 JWT Token:", token);
+                window.location.href = './home.html';
                 // 实际项目中，通常会在这里跳转到主页: window.location.href = '/home.html';
 
             } else {

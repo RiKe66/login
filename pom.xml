@@ -9,7 +9,7 @@
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
     <groupId>com.project</groupId>
-    <artifactId>big-event</artifactId>
+    <artifactId>LoginTset</artifactId>
     <version>0.0.1-SNAPSHOT</version>
     <name>big-event</name>
     <description>big-event</description>

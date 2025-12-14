@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>用户主页</title>
+    <style>
+        /* 样式保持简洁和居中 */
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            flex-direction: column;
+            color: #333;
+        }
+        .welcome-box {
+            background-color: #fff;
+            padding: 40px;
+            border-radius: 10px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            text-align: center;
+        }
+        #user-id-display {
+            font-size: 2.5em;
+            color: #5cb85c;
+            margin: 15px 0;
+            font-weight: bold;
+        }
+        .error-msg {
+            color: #d9534f;
+            font-size: 1.2em;
+        }
+        .logout-btn {
+            background-color: #f0ad4e;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="welcome-box">
+    <h1>欢迎回来！</h1>
+    <p>通过后端接口安全获取的用户 ID 是：</p>
+    <div id="user-id-display">正在加载用户信息...</div>
+    <button class="logout-btn" onclick="logout()">退出登录</button>
+</div>
+
+<script>
+    // 假设您的后端服务运行在 localhost:8080，且 Controller 前缀是 /user
+    const API_BASE_URL = 'http://localhost:8080';
+
+    // 页面加载时执行
+    document.addEventListener('DOMContentLoaded', () => {
+        fetchUserInfo();
+    });
+
+    /**
+     * 安全地从后端获取用户信息
+     */
+    async function fetchUserInfo() {
+        const token = localStorage.getItem('jwt_token');
+        const displayElement = document.getElementById('user-id-display');
+
+        if (!token) {
+            displayElement.innerHTML = '<span class="error-msg">未找到登录凭证，正在跳转...</span>';
+            //redirectToLogin(true); // 没有 Token，跳转到登录页
+            //return;
+        }
+
+        try {
+            // 发送请求到后端，并在头部携带 Token
+            const response = await fetch(`${API_BASE_URL}/user/userInfo`, {
+                method: 'GET',
+                headers: {
+                    // 这是 JWT 认证的标准格式
+                    'Authorization': `Bearer ${token}`
+                }
+            });
+
+            // 检查 HTTP 状态码 (例如 200, 401, 500)
+            if (!response.ok) {
+                // 如果是 401 (Unauthorized)，说明 Token 无效或过期
+                if (response.status === 401) {
+                    displayElement.innerHTML = '<span class="error-msg">登录状态已过期，请重新登录。</span>';
+                  //  redirectToLogin(true);
+                   // return;
+                }
+                throw new Error(`HTTP 错误: ${response.status}`);
+            }
+
+            const result = await response.json();
+
+            // 检查后端业务状态码 (你的代码中 code=0 是成功)
+            if (result.code === 0 && result.data && result.data.id) {
+                // 成功：从后端返回的 User 对象中安全地提取 ID
+                displayElement.textContent = result.data.id;
+            } else {
+                displayElement.innerHTML = '<span class="error-msg">获取数据失败: ' + (result.message || '未知错误') + '</span>';
+                //redirectToLogin(true);
+            }
+
+        } catch (error) {
+            console.error('获取用户信息请求出错:', error);
+            displayElement.innerHTML = '<span class="error-msg">网络连接或服务器错误。</span>';
+        }
+    }
+
+    /**
+     * 退出登录：清除 Token 并跳转
+     */
+    function logout() {
+        localStorage.removeItem('jwt_token');
+        window.location.href = './index.html';
+    }
+
+    /**
+     * 跳转到登录页
+     */
+    function redirectToLogin(clearToken = false) {
+        if (clearToken) {
+            localStorage.removeItem('jwt_token');
+        }
+        setTimeout(() => {
+            window.location.href = './index.html';
+        }, 1500);
+    }
+</script>
+
+</body>
+</html>

@@ -9,4 +9,6 @@ public interface UserService {
     User findByUserName(String username);
     //注册（mybatisplus自带的默认添加用户的方法）
     void register(String username, String password);
+
+
 }

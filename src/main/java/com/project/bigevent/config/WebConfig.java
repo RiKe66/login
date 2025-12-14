@@ -15,22 +15,30 @@ public class WebConfig implements WebMvcConfigurer {
 
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
-        // 登录和注册接口以及前端相关资源不拦截
-        registry.addInterceptor(loginInterceptor).excludePathPatterns(
-                // 1. 业务接口（/user 前缀已确认）
-                "/user/login",
-                "/user/register",
 
-                // 2. 核心修正：前端页面访问路径
-                "/",                // 放行根路径，Spring Boot 默认会映射到 index.html
-                "/index.html",      // 放行 index.html 文件名
+        // 确保你的拦截器也处理了 OPTIONS 请求的放行，
+        // 否则即使下面的路径正确，跨域请求也会失败。
 
-                // 3. 静态资源（以防万一）
-                "/css/**",
-                "/js/**",
-                "/**/*.html",       // 排除所有 HTML 文件
-                "/**/*.css",
-                "/**/*.js"
-        );
+        registry.addInterceptor(loginInterceptor)
+                .addPathPatterns("/**") // 拦截所有请求
+                .excludePathPatterns(
+                        // 1. 登录和注册 API (必须放行)
+                        "/user/login",
+                        "/user/register",
+
+                        // 2. 网站图标 (必须放行，你之前问的问题)
+                        "/favicon.ico",
+
+                        // 3. 首页和主页 HTML 文件 (必须放行，因为它们加载时没有 Token)
+                        // 注意：只放行文件，不放行整个 /user/userInfo 接口！
+                        "/",
+                        "/index.html",
+                        "/home.html"        // 确保主页能被访问
+
+                        // 4. 其他静态资源（如果你的资源不在 static/ 或 public/ 目录下，才需要添加）
+                        // 通常情况下，以下不需要，除非你看到 401 错误
+                        // "/css/**",
+                        // "/js/**"
+                );
     }
 }
