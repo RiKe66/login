@@ -91,8 +91,8 @@
                 // 如果是 401 (Unauthorized)，说明 Token 无效或过期
                 if (response.status === 401) {
                     displayElement.innerHTML = '<span class="error-msg">登录状态已过期，请重新登录。</span>';
-                  //  redirectToLogin(true);
-                   // return;
+                    redirectToLogin(true);
+                    return;
                 }
                 throw new Error(`HTTP 错误: ${response.status}`);
             }
@@ -105,7 +105,7 @@
                 displayElement.textContent = result.data.id;
             } else {
                 displayElement.innerHTML = '<span class="error-msg">获取数据失败: ' + (result.message || '未知错误') + '</span>';
-                //redirectToLogin(true);
+                redirectToLogin(true);
             }
 
         } catch (error) {
@@ -125,14 +125,14 @@
     /**
      * 跳转到登录页
      */
-    function redirectToLogin(clearToken = false) {
-        if (clearToken) {
-            localStorage.removeItem('jwt_token');
-        }
-        setTimeout(() => {
-            window.location.href = './index.html';
-        }, 1500);
-    }
+    // function redirectToLogin(clearToken = false) {
+    //     if (clearToken) {
+    //         localStorage.removeItem('jwt_token');
+    //     }
+    //     setTimeout(() => {
+    //         window.location.href = './index.html';
+    //     }, 1500);
+    // }
 </script>
 
 </body>
