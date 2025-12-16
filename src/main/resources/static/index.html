@@ -79,31 +79,31 @@
 <body>
 
 <div class="container">
-    <h2>用户操作</h2>
+    <h2>ユーザー操作</h2>
 
     <div class="tab-buttons">
-        <button id="show-login" class="active">登录</button>
-        <button id="show-register">注册</button>
+        <button id="show-login" class="active">ログイン</button>
+        <button id="show-register">サインアップ</button>
     </div>
 
     <div id="login-form">
-        <label for="login-username"><b>用户名 (2-16位非空白符)</b></label>
-        <input type="text" placeholder="请输入用户名" id="login-username" required>
+        <label for="login-username"><b>ユーザー名（2～16文字、空白文字不可）</b></label>
+        <input type="text" placeholder="ユーザー名を入力してください" id="login-username" required>
 
-        <label for="login-password"><b>密码 (4-16位非空白符)</b></label>
-        <input type="password" placeholder="请输入密码" id="login-password" required>
+        <label for="login-password"><b>パスワード（4～16文字、空白文字不可）</b></label>
+        <input type="password" placeholder="パスワードを入力してください。" id="login-password" required>
 
-        <button onclick="handleLogin()">登录</button>
+        <button onclick="handleLogin()">ログイン</button>
     </div>
 
     <div id="register-form" style="display: none;">
-        <label for="reg-username"><b>用户名 (2-16位非空白符)</b></label>
-        <input type="text" placeholder="请输入用户名" id="reg-username" required>
+        <label for="reg-username"><b>ユーザー名（2～16文字、空白文字不可）</b></label>
+        <input type="text" placeholder="ユーザー名を入力してください。" id="reg-username" required>
 
-        <label for="reg-password"><b>密码 (4-16位非空白符)</b></label>
-        <input type="password" placeholder="请输入密码" id="reg-password" required>
+        <label for="reg-password"><b>パスワード（4～16文字、空白文字不可）</b></label>
+        <input type="password" placeholder="パスワードを入力してください。" id="reg-password" required>
 
-        <button onclick="handleRegister()">注册</button>
+        <button onclick="handleRegister()">サインアップ</button>
     </div>
 
     <div id="message-area" class="message" style="display: none;"></div>
@@ -150,10 +150,10 @@
 
         // 简易前端校验 (与后端 @Pattern 保持一致)
         if (!/^\S{2,16}$/.test(username)) {
-            return showMessage('用户名格式错误: 2-16位非空白符');
+            return showMessage('ユーザー名の形式が正しくありません。2～16文字の空白文字を含まない文字列を入力してください。');
         }
         if (!/^\S{4,16}$/.test(password)) {
-            return showMessage('密码格式错误: 4-16位非空白符');
+            return showMessage('パスワードが不正です。（4～16文字、空白文字不可）');
         }
 
         try {
@@ -169,16 +169,16 @@
             const result = await response.json(); // 假设后端返回 JSON 结果
 
             if (result.code === 0) { // 假设 code=0 代表成功
-                showMessage('注册成功！请前往登录。', true);
+                showMessage('登録完了！ログインしてください。', true);
                 // 注册成功后可以切换到登录界面
                 document.getElementById('show-login').click();
             } else {
-                showMessage(`注册失败: ${result.message || '未知错误'}`);
+                showMessage(`登録に失敗しました: ${result.message || '未知错误'}`);
             }
 
         } catch (error) {
             console.error('注册请求出错:', error);
-            showMessage('网络请求失败，请检查后端服务是否运行。');
+            showMessage('ネットワークリクエストに失敗しました。');
         }
     }
 
@@ -189,7 +189,7 @@
 
         // 简易前端校验
         if (!/^\S{2,16}$/.test(username) || !/^\S{4,16}$/.test(password)) {
-            return showMessage('请输入符合格式的用户名和密码');
+            return showMessage('形式に合ったユーザー名とパスワードを入力してください');
         }
 
         try {
@@ -205,7 +205,7 @@
 
             if (result.code === 0) {
                 const token = result.data; // 接收后端返回的 JWT Token
-                showMessage('登录成功！JWT Token 已获取。', true);
+                showMessage('ログイン成功！JWTトークンを取得しました。', true);
 
                 // *** 关键步骤：存储 Token ***
                 localStorage.setItem('jwt_token', token);
@@ -217,12 +217,12 @@
                 // 实际项目中，通常会在这里跳转到主页: window.location.href = '/home.html';
 
             } else {
-                showMessage(`登录失败: ${result.message || '未知错误'}`);
+                showMessage(`ログインに失敗しました: ${result.message || '未知错误'}`);
             }
 
         } catch (error) {
             console.error('登录请求出错:', error);
-            showMessage('网络请求失败，请检查后端服务是否运行。');
+            showMessage('ネットワークリクエストに失敗しました。');
         }
     }
 </script>
